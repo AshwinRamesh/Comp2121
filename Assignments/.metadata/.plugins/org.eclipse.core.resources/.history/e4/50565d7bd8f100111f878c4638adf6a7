@@ -1,0 +1,21 @@
+import java.net.*;
+import java.io.*;
+
+public class Connection {
+
+	DataInputStream in;
+	DataOutputStream out;
+	Socket clientSocket;
+	
+	public Connection(Socket aClientSocket) {
+		try {
+			clientSocket = aClientSocket;
+			in = new DataInputStream(clientSocket.getInputStream());
+			out = new DataOutputStream(clientSocket.getOutputStream());
+		}
+		catch(){
+			
+		}
+	}
+	
+}
