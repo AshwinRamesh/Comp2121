@@ -7,7 +7,7 @@ public class Connection implements Runnable {
 	DataOutputStream out;
 	Socket clientSocket;
 	String clientName,hostName;
-	Email email = null;
+	
 	/* Response Strings */
 	
 	
@@ -20,7 +20,6 @@ public class Connection implements Runnable {
 			out = new DataOutputStream(clientSocket.getOutputStream());
 			clientName = clientSocket.getLocalAddress().getHostAddress().toString();
 			hostName = host;
-			
 		}
 		catch(IOException e){
 			System.out.println(e.getMessage());
@@ -72,26 +71,18 @@ public class Connection implements Runnable {
 	
 
 	private void commandDATA(String line) throws IOException {
-		if (email == null){
-			out.writeBytes("503 I need a Mail command first\n");
-		}
-		else {
-			// TODO
-		}
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void commandRCPTTO(String line) throws IOException {
-		if (email == null){
-			email = new Email();
-		}
-		// TODO
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void commandMAILFROM(String line) throws IOException {
-		if (email == null){
-			email = new Email();
-		}
-		// TODO
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void commandQUIT(String line) throws IOException {
@@ -100,22 +91,21 @@ public class Connection implements Runnable {
 	}
 
 	private void commandERROR(String line) throws IOException {
-		if(line.substring(0,9).equals("MAIL FROM") || line.substring(0,7).equals("RCPT TO")){ // Mail commands do not have the ":"
+		if(line.substring(0,9).equals("MAIL FROM") || line.substring(0,7).equals("RCPT TO")){
 			out.writeBytes("500 Command Unrecognised\n");
 		}
-		else { // Other errors
+		else {
 			out.writeBytes("500 Sorry, I don't recognise that command\n");
 		}
 		
 	}
 
 	private void commandHELO(String line) throws IOException {
-		if(line.length() == 4){ // line is equal to "HELO"
+		if(line.length() == 4){ //line is equal to "HELO"
 			out.writeBytes("250 G'day , I'm " + hostName + ", I thought you were " + clientName +"\n");
 		}
-		else { // client name is provided
-			String tempClientName = line.substring(5);
-			out.writeBytes("250 G'day " + tempClientName + ", I'm " + hostName + ", I thought you were " + clientName +"\n");
+		else {
+			
 		}
 	}
 }

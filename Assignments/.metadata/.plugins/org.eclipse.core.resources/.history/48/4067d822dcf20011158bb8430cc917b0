@@ -76,7 +76,7 @@ public class Connection implements Runnable {
 			out.writeBytes("503 I need a Mail command first\n");
 		}
 		else {
-			// TODO
+			
 		}
 	}
 
@@ -84,14 +84,14 @@ public class Connection implements Runnable {
 		if (email == null){
 			email = new Email();
 		}
-		// TODO
+		
 	}
 
 	private void commandMAILFROM(String line) throws IOException {
 		if (email == null){
 			email = new Email();
 		}
-		// TODO
+		
 	}
 
 	private void commandQUIT(String line) throws IOException {

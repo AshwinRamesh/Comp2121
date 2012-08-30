@@ -76,7 +76,7 @@ public class Connection implements Runnable {
 			out.writeBytes("503 I need a Mail command first\n");
 		}
 		else {
-			// TODO
+			
 		}
 	}
 

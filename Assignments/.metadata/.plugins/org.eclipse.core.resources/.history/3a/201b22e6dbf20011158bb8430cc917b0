@@ -72,26 +72,18 @@ public class Connection implements Runnable {
 	
 
 	private void commandDATA(String line) throws IOException {
-		if (email == null){
-			out.writeBytes("503 I need a Mail command first\n");
-		}
-		else {
-			// TODO
-		}
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void commandRCPTTO(String line) throws IOException {
-		if (email == null){
-			email = new Email();
-		}
-		// TODO
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void commandMAILFROM(String line) throws IOException {
-		if (email == null){
-			email = new Email();
-		}
-		// TODO
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void commandQUIT(String line) throws IOException {

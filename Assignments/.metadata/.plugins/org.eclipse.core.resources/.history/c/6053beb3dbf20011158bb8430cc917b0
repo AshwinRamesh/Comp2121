@@ -7,7 +7,7 @@ public class Connection implements Runnable {
 	DataOutputStream out;
 	Socket clientSocket;
 	String clientName,hostName;
-	Email email = null;
+	
 	/* Response Strings */
 	
 	
@@ -20,7 +20,6 @@ public class Connection implements Runnable {
 			out = new DataOutputStream(clientSocket.getOutputStream());
 			clientName = clientSocket.getLocalAddress().getHostAddress().toString();
 			hostName = host;
-			
 		}
 		catch(IOException e){
 			System.out.println(e.getMessage());
@@ -72,26 +71,18 @@ public class Connection implements Runnable {
 	
 
 	private void commandDATA(String line) throws IOException {
-		if (email == null){
-			out.writeBytes("503 I need a Mail command first\n");
-		}
-		else {
-			// TODO
-		}
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void commandRCPTTO(String line) throws IOException {
-		if (email == null){
-			email = new Email();
-		}
-		// TODO
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void commandMAILFROM(String line) throws IOException {
-		if (email == null){
-			email = new Email();
-		}
-		// TODO
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void commandQUIT(String line) throws IOException {
