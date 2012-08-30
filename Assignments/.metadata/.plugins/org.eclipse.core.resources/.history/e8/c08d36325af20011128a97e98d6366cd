@@ -10,7 +10,7 @@ public class Email {
 	
 	/* Constructor */
 	
-	public Email() { /** TODO */
+	public Email() {
 		
 	}
 	
@@ -65,6 +65,5 @@ public class Email {
 	
 	/* Other Methods */
 	
-	/** TODO */
 	
 }

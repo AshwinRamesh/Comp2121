@@ -1,0 +1,27 @@
+
+public class Email {
+	
+	int sequenceNo;
+	String from;
+	String to;
+	String date;
+	String subject;
+	String body;
+	
+	/* Constructor */
+	
+	public Email() {
+		
+	}
+	
+	/* Setters */
+	
+	public void setSequenceNo(int number) {
+		sequenceNo = number;
+	}
+	
+	/* Getters */
+	
+	
+	
+}

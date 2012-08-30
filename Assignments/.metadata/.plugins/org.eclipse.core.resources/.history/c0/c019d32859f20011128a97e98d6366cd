@@ -1,0 +1,23 @@
+
+public class Email {
+	
+	int sequenceNo;
+	String from;
+	String to;
+	String date;
+	String subject;
+	String body;
+	
+	/* Constructor */
+	
+	public Email() {
+		
+	}
+	
+	/* Setters */
+	
+	/* Getters */
+	
+	
+	
+}
