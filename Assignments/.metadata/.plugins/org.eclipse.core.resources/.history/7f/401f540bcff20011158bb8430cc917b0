@@ -8,16 +8,15 @@ import java.io.*;
 
 public class MySMTPServer {
 
-	static String hostName;
+	String hostName = "Ashwin's_SMTP_Server";
 	
 	public static void main(String[] args) {
 		try {
 			int port = 1063;
 			ServerSocket listenSocket = new ServerSocket(port);
-			hostName = listenSocket.getLocalSocketAddress().toString();
 			while(true) {
 				Socket clientSocket = listenSocket.accept();
-				Thread t = new Thread(new Connection(clientSocket,hostName));
+				Thread t = new Thread(new Connection(clientSocket));
 				t.start();
 			}
 		}

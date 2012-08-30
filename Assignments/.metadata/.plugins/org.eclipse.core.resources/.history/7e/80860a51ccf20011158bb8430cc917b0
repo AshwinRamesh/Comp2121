@@ -6,20 +6,15 @@ public class Connection implements Runnable {
 	DataInputStream in;
 	DataOutputStream out;
 	Socket clientSocket;
-	String address,hostName;
+	String address;
 	
-	/* Response Strings */
-	String 500_
-	
-	/********************/
-	
-	public Connection(Socket aClientSocket,String host) {
+	public Connection(Socket aClientSocket) {
 		try {
 			clientSocket = aClientSocket;
 			in = new DataInputStream(clientSocket.getInputStream());
 			out = new DataOutputStream(clientSocket.getOutputStream());
 			address = clientSocket.getLocalAddress().getHostAddress().toString();
-			hostName = host;
+			//clientSocket.get
 		}
 		catch(IOException e){
 			System.out.println(e.getMessage());
@@ -32,24 +27,18 @@ public class Connection implements Runnable {
 			while (true) {
 				@SuppressWarnings("deprecation")
 				String lineInput = in.readLine();
-				
 				if (lineInput.substring(0,4).equals("HELO")){
-					commandHELO(lineInput.trim());
+					commandHELO(lineInput);
+					//out.writeUTF(commandHELO());
 				}
 				else if(lineInput.substring(0, 4).equals("QUIT")) {
-					commandQUIT(lineInput.trim());
+					
 				}
-				else if(lineInput.substring(0,10).equals("MAIL FROM:")){
-					commandMAILFROM();
-				}
-				else if(lineInput.substring(0,8).equals("RCPT TO:")){
-					commandRCPTTO();
-				}
-				else if(lineInput.substring(0,4).equals("DATA")){
-					commandDATA();
+				else if (lineInput.equals("QUIT")) {
+					clientSocket.close();
 				}
 				else {
-					commandERROR();
+					clientSocket.close();
 				}
 				
 			}
@@ -69,32 +58,7 @@ public class Connection implements Runnable {
 		}
 	}
 	
-	private void commandDATA(String line) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void commandRCPTTO(String line) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void commandMAILFROM(String line) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void commandQUIT(String line) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void commandERROR(String line) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
 	private void commandHELO(String line) throws IOException {
-		
+		out.writeUTF("Hello ");
 	}
 }

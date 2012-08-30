@@ -69,17 +69,17 @@ public class Connection implements Runnable {
 		}
 	}
 	
-	private void commandDATA(String line) throws IOException {
+	private void commandDATA() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void commandRCPTTO(String line) throws IOException {
+	private void commandRCPTTO() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void commandMAILFROM(String line) throws IOException {
+	private void commandMAILFROM() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -89,7 +89,7 @@ public class Connection implements Runnable {
 		
 	}
 
-	private void commandERROR(String line) throws IOException {
+	private void commandERROR() {
 		// TODO Auto-generated method stub
 		
 	}

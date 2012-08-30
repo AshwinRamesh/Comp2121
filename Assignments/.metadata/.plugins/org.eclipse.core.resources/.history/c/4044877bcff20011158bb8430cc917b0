@@ -17,7 +17,7 @@ public class MySMTPServer {
 			hostName = listenSocket.getLocalSocketAddress().toString();
 			while(true) {
 				Socket clientSocket = listenSocket.accept();
-				Thread t = new Thread(new Connection(clientSocket,hostName));
+				Thread t = new Thread(new Connection(clientSocket));
 				t.start();
 			}
 		}

@@ -8,11 +8,6 @@ public class Connection implements Runnable {
 	Socket clientSocket;
 	String address,hostName;
 	
-	/* Response Strings */
-	String 500_
-	
-	/********************/
-	
 	public Connection(Socket aClientSocket,String host) {
 		try {
 			clientSocket = aClientSocket;
@@ -20,6 +15,7 @@ public class Connection implements Runnable {
 			out = new DataOutputStream(clientSocket.getOutputStream());
 			address = clientSocket.getLocalAddress().getHostAddress().toString();
 			hostName = host;
+			//clientSocket.get
 		}
 		catch(IOException e){
 			System.out.println(e.getMessage());
@@ -37,7 +33,7 @@ public class Connection implements Runnable {
 					commandHELO(lineInput.trim());
 				}
 				else if(lineInput.substring(0, 4).equals("QUIT")) {
-					commandQUIT(lineInput.trim());
+					commandQUIT();
 				}
 				else if(lineInput.substring(0,10).equals("MAIL FROM:")){
 					commandMAILFROM();
@@ -69,27 +65,27 @@ public class Connection implements Runnable {
 		}
 	}
 	
-	private void commandDATA(String line) throws IOException {
+	private void commandDATA() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void commandRCPTTO(String line) throws IOException {
+	private void commandRCPTTO() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void commandMAILFROM(String line) throws IOException {
+	private void commandMAILFROM() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void commandQUIT(String line) throws IOException {
+	private void commandQUIT() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void commandERROR(String line) throws IOException {
+	private void commandERROR() {
 		// TODO Auto-generated method stub
 		
 	}
