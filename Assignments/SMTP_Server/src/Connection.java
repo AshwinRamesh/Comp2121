@@ -22,7 +22,7 @@ public class Connection implements Runnable {
 		try {
 			while (true) {
 				@SuppressWarnings("deprecation")
-				String lineInput = in.readLine();
+				String lineInput = in.readUTF();
 				if (lineInput.equals("HELO")){
 					out.writeUTF("My name is Ashwin.");
 				}
