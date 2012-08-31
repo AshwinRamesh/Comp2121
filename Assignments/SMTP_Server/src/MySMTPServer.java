@@ -1,5 +1,5 @@
 /**
- * @author Ashwin Ramesh
+ * @author Ashwin Ramesh aram7972
  * This code is referencing the code found in the University of Sydney's COMP2121 Week 4 Lecture Slides
  */
 
@@ -14,7 +14,7 @@ public class MySMTPServer {
 		try {
 			int port = 1063;
 			ServerSocket listenSocket = new ServerSocket(port);
-			hostName = listenSocket.getLocalSocketAddress().toString();
+			hostName = listenSocket.getInetAddress().getAddress().toString(); //TODO FIX HERE
 			while(true) {
 				Socket clientSocket = listenSocket.accept();
 				Thread t = new Thread(new Connection(clientSocket,hostName));

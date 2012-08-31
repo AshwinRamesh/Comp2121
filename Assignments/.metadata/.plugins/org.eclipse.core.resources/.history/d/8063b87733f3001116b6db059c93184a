@@ -1,0 +1,121 @@
+import java.net.*;
+import java.io.*;
+
+public class Connection implements Runnable {
+
+	DataInputStream in;
+	DataOutputStream out;
+	Socket clientSocket;
+	String clientName,hostName;
+	Email email = null;
+	/* Response Strings */
+	
+	
+	/********************/
+	
+	public Connection(Socket aClientSocket,String host) {
+		try {
+			clientSocket = aClientSocket;
+			in = new DataInputStream(clientSocket.getInputStream());
+			out = new DataOutputStream(clientSocket.getOutputStream());
+			clientName = clientSocket.getLocalAddress().getHostAddress().toString();
+			hostName = host;
+			
+		}
+		catch(IOException e){
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public void run() {
+		try {
+			out.writeUTF("Hi " + clientName + "\n");
+			while (true) {
+				@SuppressWarnings("deprecation")
+				String lineInput = in.readLine();
+				
+				if (lineInput.substring(0,4).equals("HELO")){
+					commandHELO(lineInput.trim());
+				}
+				else if(lineInput.substring(0, 4).equals("QUIT")) {
+					commandQUIT(lineInput.trim());
+				}
+				else if(lineInput.substring(0,10).equals("MAIL FROM:")){
+					commandMAILFROM(lineInput);
+				}
+				else if(lineInput.substring(0,8).equals("RCPT TO:")){
+					commandRCPTTO(lineInput);
+				}
+				else if(lineInput.substring(0,4).equals("DATA")){
+					commandDATA(lineInput);
+				}
+				else {
+					commandERROR(lineInput);
+				}
+				
+			}
+		}
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
+			if(clientSocket != null) {
+				try {
+					clientSocket.close();
+				}
+				catch(IOException e) {
+					System.out.println(e.getMessage());
+				}
+			}
+		}
+	}
+	
+
+	private void commandDATA(String line) throws IOException {
+		if (email == null){
+			out.writeBytes("503 I need a Mail command first\n");
+		}
+		else {
+			// TODO
+		}
+	}
+
+	private void commandRCPTTO(String line) throws IOException {
+		if (email == null){
+			email = new Email();
+		}
+		// TODO
+	}
+
+	private void commandMAILFROM(String line) throws IOException {
+		if (email == null){
+			email = new Email();
+		}
+		// TODO
+	}
+
+	private void commandQUIT(String line) throws IOException {
+		out.writeBytes("221 " + hostName + "; I'm closing the connection, bye bye " + clientName+ "\n");
+		clientSocket.close();
+	}
+
+	private void commandERROR(String line) throws IOException {
+		if(line.substring(0,9).equals("MAIL FROM") || line.substring(0,7).equals("RCPT TO")){ // Mail commands do not have the ":"
+			out.writeBytes("500 Command Unrecognised\n");
+		}
+		else { // Other errors
+			out.writeBytes("500 Sorry, I don't recognise that command\n");
+		}
+		
+	}
+
+	private void commandHELO(String line) throws IOException {
+		if(line.length() == 4){ // line is equal to "HELO"
+			out.writeBytes("250 G'day , I'm " + hostName + ", I thought you were " + clientName +"\n");
+		}
+		else { // client name is provided
+			String tempClientName = line.substring(5);
+			out.writeBytes("250 G'day " + tempClientName + ", I'm " + hostName + ", I thought you were " + clientName +"\n");
+		}
+	}
+}

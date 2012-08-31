@@ -1,16 +1,19 @@
+/**
+ * @author Ashwin Ramesh aram7972
+ */
+
 import java.net.*;
+import java.util.Date;
 import java.io.*;
 
 public class Connection implements Runnable {
 
+	/********************/
 	DataInputStream in;
 	DataOutputStream out;
 	Socket clientSocket;
 	String clientName,hostName;
-	Email email = null;
-	/* Response Strings */
-	
-	
+	Email email = null;	
 	/********************/
 	
 	public Connection(Socket aClientSocket,String host) {
@@ -29,24 +32,24 @@ public class Connection implements Runnable {
 	
 	public void run() {
 		try {
-			out.writeUTF("Hi " + clientName + "\n");
+			Date date =  new Date();
+			out.writeUTF("220 " + hostName + " V1.4 read at " + date.toString() +"\n"); // TODO fix this to show date time etc. format: 220 staff.cs.usyd.edu.au. V1.4 ready at Fri, 31 Aug 2012 17:00:57 +1000
 			while (true) {
 				@SuppressWarnings("deprecation")
 				String lineInput = in.readLine();
-				
-				if (lineInput.substring(0,4).equals("HELO")){
+				if (lineInput.length() >= 4 && lineInput.substring(0,4).toLowerCase().equals("helo")){
 					commandHELO(lineInput.trim());
 				}
-				else if(lineInput.substring(0, 4).equals("QUIT")) {
+				else if(lineInput.length() >= 4 && lineInput.substring(0, 4).toLowerCase().equals("quit")) {
 					commandQUIT(lineInput.trim());
 				}
-				else if(lineInput.substring(0,10).equals("MAIL FROM:")){
+				else if(lineInput.length() >= 10 && lineInput.substring(0,10).toLowerCase().equals("mail from:")){
 					commandMAILFROM(lineInput);
 				}
-				else if(lineInput.substring(0,8).equals("RCPT TO:")){
+				else if(lineInput.length() >= 8 && lineInput.substring(0,8).toLowerCase().equals("rcpt to:")){
 					commandRCPTTO(lineInput);
 				}
-				else if(lineInput.substring(0,4).equals("DATA")){
+				else if(lineInput.length() >= 4 && lineInput.substring(0,4).toLowerCase().equals("data")){
 					commandDATA(lineInput);
 				}
 				else {
@@ -72,10 +75,14 @@ public class Connection implements Runnable {
 	
 
 	private void commandDATA(String line) throws IOException {
-		if (email == null){
+		if (email == null || email.getMAIL_FROM() == null) {
 			out.writeBytes("503 I need a Mail command first\n");
 		}
+		else if (email.getRCPT_TO() == null) {
+			out.writeBytes("503 I need a Rcpt command first\n");
+		}
 		else {
+			out.writeBytes("Stub\n");
 			// TODO
 		}
 	}
@@ -84,14 +91,25 @@ public class Connection implements Runnable {
 		if (email == null){
 			email = new Email();
 		}
-		// TODO
+		String tempLine = line.substring(8);
+		//TODO we have to do the bracket matching algorithm here.
+		email.setRCPT_TO(tempLine);
+		out.writeBytes("250 <"+ tempLine +"> user accepted\n");
 	}
 
 	private void commandMAILFROM(String line) throws IOException {
 		if (email == null){
 			email = new Email();
 		}
-		// TODO
+		else if (email.getMAIL_FROM() != null) {
+			out.writeBytes("503 Sender already specified\n");
+		}
+		else {
+			String tempLine = line.substring(10);
+			//TODO we have to do the bracket matching algorithm here.
+			email.setMAIL_FROM(tempLine);
+			out.writeBytes("250 <"+ tempLine +"> sender recieved OK\n");	
+		}
 	}
 
 	private void commandQUIT(String line) throws IOException {
@@ -100,13 +118,18 @@ public class Connection implements Runnable {
 	}
 
 	private void commandERROR(String line) throws IOException {
-		if(line.substring(0,9).equals("MAIL FROM") || line.substring(0,7).equals("RCPT TO")){ // Mail commands do not have the ":"
-			out.writeBytes("500 Command Unrecognised\n");
-		}
-		else { // Other errors
+		if (line.length() <= 3) {
 			out.writeBytes("500 Sorry, I don't recognise that command\n");
 		}
-		
+		else if (line.substring(0,4).toLowerCase().equals("rcpt")){
+			out.writeBytes("500 Command Unrecognised\n");			
+		}
+		else if (line.substring(0,4).toLowerCase().equals("mail")){
+			out.writeBytes("500 Command Unrecognised\n");			
+		}
+		else{
+			out.writeBytes("500 Sorry, I don't recognise that command\n");
+		}
 	}
 
 	private void commandHELO(String line) throws IOException {
@@ -114,7 +137,7 @@ public class Connection implements Runnable {
 			out.writeBytes("250 G'day , I'm " + hostName + ", I thought you were " + clientName +"\n");
 		}
 		else { // client name is provided
-			String tempClientName = line.substring(5);
+			String tempClientName = line.substring(4);
 			out.writeBytes("250 G'day " + tempClientName + ", I'm " + hostName + ", I thought you were " + clientName +"\n");
 		}
 	}
