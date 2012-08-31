@@ -1,20 +1,33 @@
 
 public class Email {
 	
+	static int emailNo = 0;
+	private static final Object countLock = new Object();
+	
 	int sequenceNo;
-	String from;
-	String to;
-	String date;
-	String subject;
-	String body;
+	String from = null;
+	String to = null;
+	String date = null;
+	String subject = null;
+	String body = null;
+	String mail_from = null;
+	String rcpt_to = null;
 	
 	/* Constructor */
 	
 	public Email() { /** TODO */
-		
+		incrementSequence();
 	}
 	
 	/* Setters */
+	
+	public void setRCPT_TO(String arg) {
+		rcpt_to = arg;
+	}
+
+	public void setMAIL_FROM(String arg) {
+		mail_from = arg;
+	}
 	
 	public void setSequenceNo(int number) {
 		sequenceNo = number;
@@ -54,6 +67,14 @@ public class Email {
 	public String getDate( ) {
 		return date; 
 	}
+
+	public String getRCPT_TO( ) {
+		return rcpt_to; 
+	}
+	
+	public String getMAIL_FROM( ) {
+		return mail_from;
+	}
 	
 	public String getSubject( ) {
 		return subject; 
@@ -65,6 +86,15 @@ public class Email {
 	
 	/* Other Methods */
 	
-	/** TODO */
+	public void incrementSequence(){ // thread safe incrementation of the sequence number
+		synchronized (countLock) {
+			emailNo++;
+			sequenceNo = emailNo;
+		}
+	}
+	
+	public void writeToFile() {
+		//TODO 
+	}
 	
 }

@@ -14,7 +14,7 @@ public class MySMTPServer {
 		try {
 			int port = 1063;
 			ServerSocket listenSocket = new ServerSocket(port);
-			hostName = listenSocket.getLocalSocketAddress().toString();
+			hostName = listenSocket.getInetAddress().getAddress().toString(); //TODO FIX HERE
 			while(true) {
 				Socket clientSocket = listenSocket.accept();
 				Thread t = new Thread(new Connection(clientSocket,hostName));
