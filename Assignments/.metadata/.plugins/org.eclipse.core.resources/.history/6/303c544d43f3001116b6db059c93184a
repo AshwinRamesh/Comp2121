@@ -1,9 +1,7 @@
 /**
  * @author Ashwin Ramesh aram7972
  */
-
 import java.net.*;
-import java.util.Date;
 import java.io.*;
 
 public class Connection implements Runnable {
@@ -32,8 +30,7 @@ public class Connection implements Runnable {
 	
 	public void run() {
 		try {
-			Date date =  new Date();
-			out.writeUTF("220 " + hostName + " V1.4 read at " + date.toString() +"\n"); // TODO fix this to show date time etc. format: 220 staff.cs.usyd.edu.au. V1.4 ready at Fri, 31 Aug 2012 17:00:57 +1000
+			out.writeUTF("Hi " + clientName + "\n"); // TODO fix this to show date time etc. format: 220 staff.cs.usyd.edu.au. V1.4 ready at Fri, 31 Aug 2012 17:00:57 +1000
 			while (true) {
 				@SuppressWarnings("deprecation")
 				String lineInput = in.readLine();
