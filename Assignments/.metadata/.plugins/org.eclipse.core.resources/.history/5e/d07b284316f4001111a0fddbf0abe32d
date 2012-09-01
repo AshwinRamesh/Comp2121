@@ -4,8 +4,6 @@
 
 import java.net.*;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.io.*;
 
 public class Connection implements Runnable {
@@ -147,33 +145,26 @@ public class Connection implements Runnable {
 			email = new Email();
 		}
 		String tempLine = line.substring(8);
+		//TODO we have to do the bracket matching algorithm here.
 		email.setRCPT_TO(tempLine);
 		out.writeBytes("250 <"+ tempLine +"> user accepted\n");
 	}
 
 	private void commandMAILFROM(String line) throws IOException {
-		String tempLine = line.substring(10);
 		if (email == null){
 			email = new Email();
 		}
 		if (email.getMAIL_FROM() != null) {
 			out.writeBytes("503 Sender already specified\n");
 		}
-		else if (!validEmail(tempLine)) {
-			out.writeBytes("503 <"+ tempLine +"> is not a valid email address\n");
-		}
 		else {
+			String tempLine = line.substring(10);
+			//TODO we have to do the bracket matching algorithm here.
 			email.setMAIL_FROM(tempLine);
 			out.writeBytes("250 <"+ tempLine +"> sender recieved OK\n");	
 		}
 	}
 
-	private boolean validEmail(String email) { // REGEX TO CHECK IF EMAIL IS OF CORRECT FORMAT - ends with usyd.edu.au
-		Pattern p = Pattern.compile("^.+@.*(usyd)\\.(edu)\\.(au)$");
-		Matcher m = p.matcher(email);
-		return m.matches();
-	}
-	
 	private void commandQUIT(String line) throws IOException {
 		out.writeBytes("221 " + hostName + "; I'm closing the connection, bye bye " + clientName+ "\n");
 		clientSocket.close();

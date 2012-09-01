@@ -4,7 +4,6 @@
 
 import java.net.*;
 import java.util.Date;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.*;
 
@@ -152,6 +151,8 @@ public class Connection implements Runnable {
 	}
 
 	private void commandMAILFROM(String line) throws IOException {
+		// Check if email address is valid : Ends with - usyd.edu.au
+		//TODO
 		String tempLine = line.substring(10);
 		if (email == null){
 			email = new Email();
@@ -168,10 +169,10 @@ public class Connection implements Runnable {
 		}
 	}
 
-	private boolean validEmail(String email) { // REGEX TO CHECK IF EMAIL IS OF CORRECT FORMAT - ends with usyd.edu.au
-		Pattern p = Pattern.compile("^.+@.*(usyd)\\.(edu)\\.(au)$");
+	private boolean validEmail(String email) {
+		Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
 		Matcher m = p.matcher(email);
-		return m.matches();
+		boolean matchFound = m.matches();
 	}
 	
 	private void commandQUIT(String line) throws IOException {

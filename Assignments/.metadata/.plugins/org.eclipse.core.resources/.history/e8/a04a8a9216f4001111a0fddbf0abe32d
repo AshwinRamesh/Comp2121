@@ -24,7 +24,7 @@ public class Email {
 	String contentType = "";
 	/* Constructor */
 	
-	public Email() { 
+	public Email() { /** TODO */
 		incrementSequence();
 	}
 	

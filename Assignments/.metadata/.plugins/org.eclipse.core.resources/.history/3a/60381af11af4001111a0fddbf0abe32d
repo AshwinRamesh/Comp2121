@@ -169,7 +169,7 @@ public class Connection implements Runnable {
 	}
 
 	private boolean validEmail(String email) { // REGEX TO CHECK IF EMAIL IS OF CORRECT FORMAT - ends with usyd.edu.au
-		Pattern p = Pattern.compile("^.+@.*(usyd)\\.(edu)\\.(au)$");
+		Pattern p = Pattern.compile("^.+@.*(usyd)\.(edu)\.(au)$");
 		Matcher m = p.matcher(email);
 		return m.matches();
 	}
