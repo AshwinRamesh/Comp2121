@@ -103,15 +103,18 @@ public class Connection implements Runnable {
 			}
 			else if (line.length() >= 13 && line.substring(0, 13).equals("MIME-Version:")) {
 				email.setMIME(line.substring(13).trim());
+				System.out.println(email.getMIME());
 			}
 			else if (line.length() >= 13 && line.substring(0, 13).equals("Content-Type:")) {
 				email.setContentType(line.substring(13).trim());
+				System.out.println(email.getContentType());
 			}
 			else if (line.length() >= 5 && line.substring(0, 5).equals("From:")) {
 				String tempLine = line.substring(5).trim();
 				if((tempLine.charAt(0) == '[' && tempLine.charAt(tempLine.length()-1) == ']') || (tempLine.charAt(0) == '<' && tempLine.charAt(tempLine.length()-1) == '>')) {
 					tempLine = tempLine.substring(1, tempLine.length()-2);
 					email.setFrom(tempLine);
+					System.out.println(email.getFrom());
 				}
 				else {
 					email.setFrom(tempLine);
@@ -129,13 +132,16 @@ public class Connection implements Runnable {
 			}
 			else if (line.length() >= 8 && line.substring(0, 8).equals("Subject:")) {
 				email.setSubject(line.substring(8).trim());
+				System.out.println(email.getSubject());
 			}
 			else if (line.length() >= 5 && line.substring(0, 5).equals("Date:")) {
 				email.setDate(line.substring(5).trim());
+				System.out.println(email.getDate());
 			}
 			else { // add to body
 				body = body + line + "\n";
 				email.setBody(body);
+				System.out.println("helllo " + email.getBody());
 			}
 		}
 	}

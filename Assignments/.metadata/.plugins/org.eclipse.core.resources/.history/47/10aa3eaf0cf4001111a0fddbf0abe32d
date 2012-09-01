@@ -35,7 +35,7 @@ public class Email {
 	}
 	
 	public void setMIME(String arg) {
-		mime = arg;
+		rcpt_to = arg;
 	}
 	
 	public void setRCPT_TO(String arg) {
@@ -146,7 +146,7 @@ public class Email {
 		returnString += "\nDate: " + date;
 		returnString += "\nSubject: " + subject;
 		returnString += "\nBody: " + body;
-		return returnString;
+		return null;
 	}
 	
 }

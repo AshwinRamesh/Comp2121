@@ -13,14 +13,14 @@ public class Email {
 	private static final Object countLock = new Object();
 	
 	int sequenceNo;
-	String from = "";
-	String to = "";
-	String date = "";
-	String subject = "";
-	String body = "";
+	String from = null;
+	String to = null;
+	String date = null;
+	String subject = null;
+	String body = null;
 	String mail_from = null;
 	String rcpt_to = null;
-	String mime = "";
+	String mime = null;
 	String contentType = "";
 	/* Constructor */
 	
@@ -29,13 +29,9 @@ public class Email {
 	}
 	
 	/* Setters */
-
-	public void setContentType(String arg) {
-		contentType = arg;
-	}
 	
 	public void setMIME(String arg) {
-		mime = arg;
+		rcpt_to = arg;
 	}
 	
 	public void setRCPT_TO(String arg) {
@@ -73,11 +69,6 @@ public class Email {
 	public int getSequenceNo(int number) {
 		return sequenceNo;
 	}
-	
-	public String getContentType( ) {
-		return contentType; 
-	}
-	
 	public String getFrom( ) {
 		return from; 
 	}
@@ -146,7 +137,7 @@ public class Email {
 		returnString += "\nDate: " + date;
 		returnString += "\nSubject: " + subject;
 		returnString += "\nBody: " + body;
-		return returnString;
+		return null;
 	}
 	
 }

@@ -103,9 +103,11 @@ public class Connection implements Runnable {
 			}
 			else if (line.length() >= 13 && line.substring(0, 13).equals("MIME-Version:")) {
 				email.setMIME(line.substring(13).trim());
+				System.out.println(email.getMIME());
 			}
 			else if (line.length() >= 13 && line.substring(0, 13).equals("Content-Type:")) {
 				email.setContentType(line.substring(13).trim());
+				System.out.println(email.getContentType());
 			}
 			else if (line.length() >= 5 && line.substring(0, 5).equals("From:")) {
 				String tempLine = line.substring(5).trim();

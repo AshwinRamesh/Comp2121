@@ -85,57 +85,60 @@ public class Connection implements Runnable {
 		else {
 			out.writeBytes("354 Enter the mail - end with a '.' on a line\n");
 			getMimeData();
-			email.writeToFile(); 
+			email.writeToFile(); //TODO
 			out.writeBytes("250 I got that one thanks\n");
-			email = null; // remove email
+			email = null;
 		}
 	}
 
 	private void getMimeData() throws IOException {
 		boolean finished = false; // check if email is finished with empty line and dot
-		String body = "";
 		while(!finished) {
 			@SuppressWarnings("deprecation")
 			String line = in.readLine();
+			String body = "";
+			System.out.println("line length: "+ line.length());
 			if (line.equals(".")){ // exit data function
 				email.setBody(body);
+				System.out.println(email.getBody());
 				finished = true;
 			}
-			else if (line.length() >= 13 && line.substring(0, 13).equals("MIME-Version:")) {
+			else if (line.length() >= 13 && line.substring(0, 12).equals("MIME-Version:")) {
 				email.setMIME(line.substring(13).trim());
+				System.out.println(email.getMIME());
 			}
-			else if (line.length() >= 13 && line.substring(0, 13).equals("Content-Type:")) {
+			else if (line.length() >= 13 && line.substring(0, 12).equals("Content-Type:")) {
 				email.setContentType(line.substring(13).trim());
+				System.out.println(email.getContentType());
 			}
-			else if (line.length() >= 5 && line.substring(0, 5).equals("From:")) {
+			else if (line.length() >= 5 && line.substring(0, 4).equals("From:")) {
 				String tempLine = line.substring(5).trim();
 				if((tempLine.charAt(0) == '[' && tempLine.charAt(tempLine.length()-1) == ']') || (tempLine.charAt(0) == '<' && tempLine.charAt(tempLine.length()-1) == '>')) {
 					tempLine = tempLine.substring(1, tempLine.length()-2);
 					email.setFrom(tempLine);
-				}
-				else {
-					email.setFrom(tempLine);
+					System.out.println(email.getFrom());
 				}
 			}
-			else if (line.length() >= 3 && line.substring(0, 3).equals("To:")) {
+			else if (line.length() >= 3 && line.substring(0, 2).equals("To:")) {
 				String tempLine = line.substring(3).trim();
 				if((tempLine.charAt(0) == '[' && tempLine.charAt(tempLine.length()-1) == ']') || (tempLine.charAt(0) == '<' && tempLine.charAt(tempLine.length()-1) == '>')) {
 					tempLine = tempLine.substring(1, tempLine.length()-2);
 					email.setTo(tempLine);
-				}
-				else {
-					email.setTo(tempLine);
+					System.out.println(email.getTo());
 				}
 			}
-			else if (line.length() >= 8 && line.substring(0, 8).equals("Subject:")) {
+			else if (line.length() >= 8 && line.substring(0, 7).equals("Subject:")) {
 				email.setSubject(line.substring(8).trim());
+				System.out.println(email.getSubject());
 			}
-			else if (line.length() >= 5 && line.substring(0, 5).equals("Date:")) {
+			else if (line.length() >= 5 && line.substring(0, 4).equals("Date:")) {
 				email.setDate(line.substring(5).trim());
+				System.out.println(email.getDate());
 			}
 			else { // add to body
 				body = body + line + "\n";
 				email.setBody(body);
+				System.out.println(email.getBody());
 			}
 		}
 	}
