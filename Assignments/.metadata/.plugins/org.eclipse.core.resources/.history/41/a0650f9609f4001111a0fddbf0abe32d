@@ -109,7 +109,7 @@ public class Email {
 		}
 	}
 	
-	public void writeToFile() {
+	public void writeToFile() { 		//TODO 
 		File f;
 		try {
 			f = new File("log_"+sequenceNo+".txt");
@@ -127,7 +127,7 @@ public class Email {
 	}
 	
 	private String formatEmailOutput() {
-		return null;
+		
 	}
 	
 }
