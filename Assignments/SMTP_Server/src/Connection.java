@@ -21,7 +21,8 @@ public class Connection implements Runnable {
 			clientSocket = aClientSocket;
 			in = new DataInputStream(clientSocket.getInputStream());
 			out = new DataOutputStream(clientSocket.getOutputStream());
-			clientName = clientSocket.getLocalAddress().getHostAddress().toString();
+			clientSocket.getInetAddress();
+			clientName = InetAddress.getLocalHost().getHostName();
 			hostName = host;
 			
 		}
@@ -33,7 +34,7 @@ public class Connection implements Runnable {
 	public void run() {
 		try {
 			Date date =  new Date();
-			out.writeUTF("220 " + hostName + " V1.4 read at " + date.toString() +"\n"); // TODO fix this to show date time etc. format: 220 staff.cs.usyd.edu.au. V1.4 ready at Fri, 31 Aug 2012 17:00:57 +1000
+			out.writeBytes("220 " + hostName + " V1.4 read at " + date.toString() +"\n"); // TODO fix this to show date time etc. format: 220 staff.cs.usyd.edu.au. V1.4 ready at Fri, 31 Aug 2012 17:00:57 +1000
 			while (true) {
 				@SuppressWarnings("deprecation")
 				String lineInput = in.readLine();
@@ -44,6 +45,7 @@ public class Connection implements Runnable {
 					commandQUIT(lineInput.trim());
 				}
 				else if(lineInput.length() >= 10 && lineInput.substring(0,10).toLowerCase().equals("mail from:")){
+					System.out.println("mail from");
 					commandMAILFROM(lineInput);
 				}
 				else if(lineInput.length() >= 8 && lineInput.substring(0,8).toLowerCase().equals("rcpt to:")){
@@ -82,11 +84,52 @@ public class Connection implements Runnable {
 			out.writeBytes("503 I need a Rcpt command first\n");
 		}
 		else {
-			out.writeBytes("Stub\n");
-			// TODO
+			out.writeBytes("354 Enter the mail - end with a '.' on a line\n");
+			getMimeData();
+			email.writeToFile(); //TODO
+			out.writeBytes("250 I got that one thanks\n");
 		}
 	}
 
+	private void getMimeData() throws IOException {
+		boolean finished = false; // check if email is finished with empty line and dot
+		while(!finished) {
+			@SuppressWarnings("deprecation")
+			String line = in.readLine();
+			String body = "";
+			if (line.equals(".")){ // exit data function
+				email.setBody(body);
+				finished = true;
+			}
+			else if (line.length() >= 13 && line.substring(0, 12).equals("MIME-Version:")) {
+				email.setMIME(line.substring(13).trim());
+			}
+			else if (line.length() >= 5 && line.substring(0, 4).equals("From:")) {
+				String tempLine = line.substring(5).trim();
+				if((tempLine.charAt(0) == '[' && tempLine.charAt(tempLine.length()-1) == ']') || (tempLine.charAt(0) == '<' && tempLine.charAt(tempLine.length()-1) == '>')) {
+					tempLine = tempLine.substring(1, tempLine.length()-2);
+					email.setFrom(tempLine);
+				}
+			}
+			else if (line.length() >= 3 && line.substring(0, 2).equals("To:")) {
+				String tempLine = line.substring(3).trim();
+				if((tempLine.charAt(0) == '[' && tempLine.charAt(tempLine.length()-1) == ']') || (tempLine.charAt(0) == '<' && tempLine.charAt(tempLine.length()-1) == '>')) {
+					tempLine = tempLine.substring(1, tempLine.length()-2);
+					email.setTo(tempLine);
+				}
+			}
+			else if (line.length() >= 8 && line.substring(0, 7).equals("Subject:")) {
+				email.setSubject(line.substring(8).trim());
+			}
+			else if (line.length() >= 5 && line.substring(0, 4).equals("Date:")) {
+				email.setDate(line.substring(5).trim());
+			}
+			else { // add to body
+				body = body + line + "\n";
+			}
+		}
+	}
+	
 	private void commandRCPTTO(String line) throws IOException {
 		if (email == null){
 			email = new Email();
@@ -101,12 +144,13 @@ public class Connection implements Runnable {
 		if (email == null){
 			email = new Email();
 		}
-		else if (email.getMAIL_FROM() != null) {
+		if (email.getMAIL_FROM() != null) {
 			out.writeBytes("503 Sender already specified\n");
 		}
 		else {
 			String tempLine = line.substring(10);
 			//TODO we have to do the bracket matching algorithm here.
+			System.out.println("hello");
 			email.setMAIL_FROM(tempLine);
 			out.writeBytes("250 <"+ tempLine +"> sender recieved OK\n");	
 		}

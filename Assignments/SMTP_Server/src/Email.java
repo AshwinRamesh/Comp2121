@@ -15,7 +15,7 @@ public class Email {
 	String body = null;
 	String mail_from = null;
 	String rcpt_to = null;
-	
+	String mime = null;
 	/* Constructor */
 	
 	public Email() { /** TODO */
@@ -23,6 +23,10 @@ public class Email {
 	}
 	
 	/* Setters */
+	
+	public void setMIME(String arg) {
+		rcpt_to = arg;
+	}
 	
 	public void setRCPT_TO(String arg) {
 		rcpt_to = arg;
@@ -63,6 +67,10 @@ public class Email {
 		return from; 
 	}
 
+	public String getMIME( ) {
+		return mime; 
+	}
+	
 	public String getTo( ) {
 		return to; 
 	}
@@ -98,6 +106,7 @@ public class Email {
 	
 	public void writeToFile() {
 		//TODO 
+		System.out.println("stub method");
 	}
 	
 }

@@ -1,0 +1,186 @@
+/**
+ * @author Ashwin Ramesh aram7972
+ */
+
+import java.net.*;
+import java.util.Date;
+import java.io.*;
+
+public class Connection implements Runnable {
+
+	/********************/
+	DataInputStream in;
+	DataOutputStream out;
+	Socket clientSocket;
+	String clientName,hostName;
+	Email email = null;	
+	/********************/
+	
+	public Connection(Socket aClientSocket,String host) {
+		try {
+			clientSocket = aClientSocket;
+			in = new DataInputStream(clientSocket.getInputStream());
+			out = new DataOutputStream(clientSocket.getOutputStream());
+			clientSocket.getInetAddress();
+			clientName = InetAddress.getLocalHost().getHostName();
+			hostName = host;
+			
+		}
+		catch(IOException e){
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public void run() {
+		try {
+			Date date =  new Date();
+			out.writeBytes("220 " + hostName + " V1.4 read at " + date.toString() +"\n"); // TODO fix this to show date time etc. format: 220 staff.cs.usyd.edu.au. V1.4 ready at Fri, 31 Aug 2012 17:00:57 +1000
+			while (true) {
+				@SuppressWarnings("deprecation")
+				String lineInput = in.readLine();
+				if (lineInput.length() >= 4 && lineInput.substring(0,4).toLowerCase().equals("helo")){
+					commandHELO(lineInput.trim());
+				}
+				else if(lineInput.length() >= 4 && lineInput.substring(0, 4).toLowerCase().equals("quit")) {
+					commandQUIT(lineInput.trim());
+				}
+				else if(lineInput.length() >= 10 && lineInput.substring(0,10).toLowerCase().equals("mail from:")){
+					commandMAILFROM(lineInput);
+				}
+				else if(lineInput.length() >= 8 && lineInput.substring(0,8).toLowerCase().equals("rcpt to:")){
+					commandRCPTTO(lineInput);
+				}
+				else if(lineInput.length() >= 4 && lineInput.substring(0,4).toLowerCase().equals("data")){
+					commandDATA(lineInput);
+				}
+				else {
+					commandERROR(lineInput);
+				}
+				
+			}
+		}
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
+			if(clientSocket != null) {
+				try {
+					clientSocket.close();
+				}
+				catch(IOException e) {
+					System.out.println(e.getMessage());
+				}
+			}
+		}
+	}
+	
+
+	private void commandDATA(String line) throws IOException {
+		if (email == null || email.getMAIL_FROM() == null) {
+			out.writeBytes("503 I need a Mail command first\n");
+		}
+		else if (email.getRCPT_TO() == null) {
+			out.writeBytes("503 I need a Rcpt command first\n");
+		}
+		else {
+			out.writeBytes("354 Enter the mail - end with a '.' on a line\n");
+			getMimeData();
+			email.writeToFile(); //TODO
+			out.writeBytes("250 I got that one thanks\n");
+		}
+	}
+
+	private void getMimeData() throws IOException {
+		boolean finished = false; // check if email is finished with empty line and dot
+		while(!finished) {
+			@SuppressWarnings("deprecation")
+			String line = in.readLine();
+			String body = "";
+			if (line.equals(".")){ // exit data function
+				email.setBody(body);
+				finished = true;
+			}
+			else if (line.length() >= 13 && line.substring(0, 12).equals("MIME-Version:")) {
+				email.setMIME(line.substring(13).trim());
+			}
+			else if (line.length() >= 5 && line.substring(0, 4).equals("From:")) {
+				String tempLine = line.substring(5).trim();
+				if((tempLine.charAt(0) == '[' && tempLine.charAt(tempLine.length()-1) == ']') || (tempLine.charAt(0) == '<' && tempLine.charAt(tempLine.length()-1) == '>')) {
+					tempLine = tempLine.substring(1, tempLine.length()-2);
+					email.setFrom(tempLine);
+				}
+			}
+			else if (line.length() >= 3 && line.substring(0, 2).equals("To:")) {
+				String tempLine = line.substring(3).trim();
+				if((tempLine.charAt(0) == '[' && tempLine.charAt(tempLine.length()-1) == ']') || (tempLine.charAt(0) == '<' && tempLine.charAt(tempLine.length()-1) == '>')) {
+					tempLine = tempLine.substring(1, tempLine.length()-2);
+					email.setTo(tempLine);
+				}
+			}
+			else if (line.length() >= 8 && line.substring(0, 7).equals("Subject:")) {
+				email.setSubject(line.substring(8).trim());
+			}
+			else if (line.length() >= 5 && line.substring(0, 4).equals("Date:")) {
+				email.setDate(line.substring(5).trim());
+			}
+			else { // add to body
+				body = body + line + "\n";
+			}
+		}
+	}
+	
+	private void commandRCPTTO(String line) throws IOException {
+		if (email == null){
+			email = new Email();
+		}
+		String tempLine = line.substring(8);
+		//TODO we have to do the bracket matching algorithm here.
+		email.setRCPT_TO(tempLine);
+		out.writeBytes("250 <"+ tempLine +"> user accepted\n");
+	}
+
+	private void commandMAILFROM(String line) throws IOException {
+		if (email == null){
+			email = new Email();
+		}
+		else if (email.getMAIL_FROM() != null) {
+			out.writeBytes("503 Sender already specified\n");
+		}
+		else {
+			String tempLine = line.substring(10);
+			//TODO we have to do the bracket matching algorithm here.
+			email.setMAIL_FROM(tempLine);
+			out.writeBytes("250 <"+ tempLine +"> sender recieved OK\n");	
+		}
+	}
+
+	private void commandQUIT(String line) throws IOException {
+		out.writeBytes("221 " + hostName + "; I'm closing the connection, bye bye " + clientName+ "\n");
+		clientSocket.close();
+	}
+
+	private void commandERROR(String line) throws IOException {
+		if (line.length() <= 3) {
+			out.writeBytes("500 Sorry, I don't recognise that command\n");
+		}
+		else if (line.substring(0,4).toLowerCase().equals("rcpt")){
+			out.writeBytes("500 Command Unrecognised\n");			
+		}
+		else if (line.substring(0,4).toLowerCase().equals("mail")){
+			out.writeBytes("500 Command Unrecognised\n");			
+		}
+		else{
+			out.writeBytes("500 Sorry, I don't recognise that command\n");
+		}
+	}
+
+	private void commandHELO(String line) throws IOException {
+		if(line.length() == 4){ // line is equal to "HELO"
+			out.writeBytes("250 G'day , I'm " + hostName + ", I thought you were " + clientName +"\n");
+		}
+		else { // client name is provided
+			String tempClientName = line.substring(4);
+			out.writeBytes("250 G'day " + tempClientName + ", I'm " + hostName + ", I thought you were " + clientName +"\n");
+		}
+	}
+}
