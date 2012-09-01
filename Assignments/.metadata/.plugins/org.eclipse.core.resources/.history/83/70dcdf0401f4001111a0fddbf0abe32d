@@ -45,6 +45,7 @@ public class Connection implements Runnable {
 					commandQUIT(lineInput.trim());
 				}
 				else if(lineInput.length() >= 10 && lineInput.substring(0,10).toLowerCase().equals("mail from:")){
+					System.out.println("mail from");
 					commandMAILFROM(lineInput);
 				}
 				else if(lineInput.length() >= 8 && lineInput.substring(0,8).toLowerCase().equals("rcpt to:")){
@@ -149,6 +150,7 @@ public class Connection implements Runnable {
 		else {
 			String tempLine = line.substring(10);
 			//TODO we have to do the bracket matching algorithm here.
+			System.out.println("hello");
 			email.setMAIL_FROM(tempLine);
 			out.writeBytes("250 <"+ tempLine +"> sender recieved OK\n");	
 		}

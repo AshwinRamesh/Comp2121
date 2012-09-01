@@ -123,6 +123,7 @@ public class Email {
 		catch(IOException ioe) {
 			System.err.println(ioe);
 		}
+		System.out.println("stub method");
 	}
 	
 }
